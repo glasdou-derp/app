@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Badge: typeof import('primevue/badge')['default']
+    BlockUi: typeof import('primevue/blockui')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']

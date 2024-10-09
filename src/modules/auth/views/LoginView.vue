@@ -11,10 +11,10 @@ import { loginSchema } from '../schemas'
 import { useAuthStore } from '../store/auth.store'
 import { useConfigStore } from '@/modules/shared/stores/config.store'
 
+useConfigStore().setTitle('Inicio de sesión')
 const toast = useToast()
 const authStore = useAuthStore()
-useConfigStore().setTitle('Inicio de sesión')
-
+const loading = ref(false)
 const initialValues = envs.mode === 'development' ? { username: 'dev', password: 'Dev@123' } : {}
 const { defineField, errors, handleSubmit } = useForm({
   validationSchema: loginSchema,
@@ -26,6 +26,8 @@ const [username, usernameAttrs] = defineField('username')
 const [password, passwordAttrs] = defineField('password')
 
 const onSubmit = handleSubmit(async ({ username, password }, { resetForm }) => {
+  loading.value = true
+
   try {
     const ok = await authStore.login(username, password)
 
@@ -50,6 +52,8 @@ const onSubmit = handleSubmit(async ({ username, password }, { resetForm }) => {
       detail: 'Ocurrió un error al iniciar sesión',
       life: 3000
     })
+  } finally {
+    loading.value = false
   }
 })
 </script>
@@ -57,34 +61,42 @@ const onSubmit = handleSubmit(async ({ username, password }, { resetForm }) => {
 <template>
   <div class="max-w-[30rem] h-full mx-auto flex items-center flex-col justify-center">
     <h1 class="font-bold text-center text-2xl mb-5">Logo</h1>
-    <Card class="w-full dark:bg-gray-900 border dark:border-gray-700">
-      <template #title>
-        <div class="text-center">Inicio de sesión</div>
-      </template>
-      <template #content>
-        <form @submit="onSubmit" class="flex flex-col gap-6" v-focustrap>
-          <CustomInputText
-            id="username"
-            label="Nombre de usuario"
-            v-model="username"
-            v-bind="usernameAttrs"
-            :error="errors.username"
-            autofocus
-          />
-          <CustomInputPassword
-            id="password"
-            label="Contraseña"
-            type="password"
-            v-model="password"
-            v-bind="passwordAttrs"
-            :error="errors.password"
-          />
-          <CustomButton type="submit" label="Iniciar sesión" class="mt-4" fluid />
-          <transition name="p-message" tag="div" class="flex flex-col">
-            <Message v-if="error" severity="error">{{ error }}</Message>
-          </transition>
-        </form>
-      </template>
-    </Card>
+    <BlockUi :blocked="loading" class="w-full">
+      <Card class="w-full dark:bg-gray-900 border dark:border-gray-700">
+        <template #title>
+          <div class="text-center">Inicio de sesión</div>
+        </template>
+        <template #content>
+          <form @submit="onSubmit" class="flex flex-col gap-6" v-focustrap>
+            <CustomInputText
+              id="username"
+              label="Nombre de usuario"
+              v-model="username"
+              v-bind="usernameAttrs"
+              :error="errors.username"
+              autofocus
+            />
+            <CustomInputPassword
+              id="password"
+              label="Contraseña"
+              type="password"
+              v-model="password"
+              v-bind="passwordAttrs"
+              :error="errors.password"
+            />
+            <CustomButton
+              type="submit"
+              label="Iniciar sesión"
+              class="mt-4"
+              fluid
+              :loading="loading"
+            />
+            <transition name="p-message" tag="div" class="flex flex-col">
+              <Message v-if="error" severity="error">{{ error }}</Message>
+            </transition>
+          </form>
+        </template>
+      </Card>
+    </BlockUi>
   </div>
 </template>
