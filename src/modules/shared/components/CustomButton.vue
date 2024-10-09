@@ -50,7 +50,7 @@ const { darkTheme } = storeToRefs(configStore)
     :type="type"
     :class="className"
     :iconClass="`!${iconClass}`"
-    @click="$emit('click')"
+    @click="$emit('click', $event)"
   />
 </template>
 

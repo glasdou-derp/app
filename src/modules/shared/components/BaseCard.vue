@@ -1,12 +1,27 @@
 <script setup lang="ts">
 import type { CardSlots } from 'primevue/card'
 
-// Define the slots for the Card component
+import type { UserSummary } from '@/modules/users/interfaces'
+
+interface Props {
+  deleted?: boolean
+  createdBy?: UserSummary | null
+  createdAt?: string | Date
+}
+
+withDefaults(defineProps<Props>(), { deleted: false })
 defineSlots<CardSlots>()
+defineEmits(['on:info', 'on:edit', 'on:delete'])
 </script>
 
 <template>
-  <Card class="dark:bg-dark-800 border dark:border-gray-700 border-primary-400">
+  <Card
+    :class="[
+      'dark:bg-dark-950 dark:border-gray-700 border',
+      { ' border-primary-400': !deleted },
+      { 'border-red-500 dark:border-red-600': deleted }
+    ]"
+  >
     <!-- Use the slots here -->
     <template #header>
       <slot name="header" />
