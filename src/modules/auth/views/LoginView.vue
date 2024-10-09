@@ -9,9 +9,11 @@ import CustomInputPassword from '@shared/components/CustomInputPassword.vue'
 import CustomInputText from '@shared/components/CustomInputText.vue'
 import { loginSchema } from '../schemas'
 import { useAuthStore } from '../store/auth.store'
+import { useConfigStore } from '@/modules/shared/stores/config.store'
 
 const toast = useToast()
 const authStore = useAuthStore()
+useConfigStore().setTitle('Inicio de sesión')
 
 const initialValues = envs.mode === 'development' ? { username: 'dev', password: 'Dev@123' } : {}
 const { defineField, errors, handleSubmit } = useForm({

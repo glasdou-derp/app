@@ -1,3 +1,4 @@
+import { envs } from '@/config/envs'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -6,6 +7,8 @@ type Theme = 'light' | 'dark'
 
 export const useConfigStore = defineStore('config', () => {
   const theme = ref(useLocalStorage<Theme | null>('theme', null))
+  const title = ref('App Title')
+  const isMobile = ref(window.innerWidth <= 768)
 
   const setAppTheme = () => {
     const element = document.querySelector('html')
@@ -29,11 +32,18 @@ export const useConfigStore = defineStore('config', () => {
 
   return {
     //? Props
+    title,
+    isMobile,
+
     //* Getters
     darkTheme: computed(() => theme.value === 'dark'),
 
     //! Actions
     setAppTheme,
-    toggleTheme
+    toggleTheme,
+    setTitle: (newTitle: string) => {
+      title.value = `${newTitle} | ${envs.title}`
+    },
+    setIsMobile: (newValue: boolean) => (isMobile.value = newValue)
   }
 })
