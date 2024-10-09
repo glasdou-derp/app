@@ -3,8 +3,9 @@ import { defineStore } from 'pinia'
 import { useToast } from 'primevue/usetoast'
 import { computed, ref } from 'vue'
 
+import { UserRole, type User } from '@/modules/users'
 import { checkAuthAction, loginAction } from '../actions'
-import { AuthStatus, UserRoles, type User } from '../interfaces'
+import { AuthStatus } from '../interfaces'
 
 export const useAuthStore = defineStore('auth', () => {
   const toast = useToast()
@@ -81,9 +82,9 @@ export const useAuthStore = defineStore('auth', () => {
     // Getters
     isChecking: computed(() => authStatus.value === AuthStatus.Checking),
     isAuthenticated: computed(() => authStatus.value === AuthStatus.Authenticated),
-    isAdmin: computed(() => user.value?.roles.includes(UserRoles.Admin) ?? false),
+    isAdmin: computed(() => user.value?.roles.includes(UserRole.Admin) ?? false),
     username: computed(() => user.value?.username),
-    userRoles: computed(() => user.value?.roles),
+    userRoles: computed(() => user.value?.roles || []),
 
     // Actions
     login,
