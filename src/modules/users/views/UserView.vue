@@ -63,22 +63,24 @@
 
           <!-- Meta Data (Read-only) -->
           <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            <Fieldset legend="Creado Por" v-if="user.creator">
-              <p class="m-0">
-                <span class="flex items-center text-muted-color">
-                  <i :class="icons.USER"></i>
-                  <span class="ml-2">@{{ user.creator?.username }}</span>
-                </span>
-                <span class="flex items-center text-muted-color">
-                  <i :class="icons.ENVELOPE"></i>
-                  <span class="ml-2">{{ user.creator?.email }}</span>
-                </span>
-                <span class="flex items-center text-muted-color">
-                  <i :class="icons.CALENDAR"></i>
-                  <span class="ml-2">{{ Formatter.getDate(user.createdAt) }}</span>
-                </span>
-              </p>
-            </Fieldset>
+            <template v-for="({ user, date }, index) in getUserRelatedData" :key="index">
+              <Fieldset legend="Creado Por" v-if="user">
+                <p class="m-0">
+                  <span class="flex items-center text-muted-color">
+                    <i :class="icons.USER"></i>
+                    <span class="ml-2">@{{ user?.username }}</span>
+                  </span>
+                  <span class="flex items-center text-muted-color">
+                    <i :class="icons.ENVELOPE"></i>
+                    <span class="ml-2">{{ user?.email }}</span>
+                  </span>
+                  <span class="flex items-center text-muted-color">
+                    <i :class="icons.CALENDAR"></i>
+                    <span class="ml-2">{{ Formatter.getDate(date) }}</span>
+                  </span>
+                </p>
+              </Fieldset>
+            </template>
           </section>
 
           <!-- Submit Button -->

@@ -2,7 +2,6 @@ import { api } from '@/api'
 import type { User } from '@/modules/users/interfaces'
 
 export const createUpdateUserAction = async (user: Partial<User>): Promise<User> => {
-  console.log('🚀 ~ createUpdateUserAction ~ user:', user)
   const userId = user.id
 
   user = cleanUser(user)
@@ -17,8 +16,9 @@ const cleanUser = (user: Partial<User>) => {
   delete user.createdAt
   delete user.updatedAt
   delete user.deletedAt
-  delete user.creator
-
+  delete user.createdBy
+  delete user.updatedBy
+  delete user.deletedBy
   if (!user.password) delete user.password
 
   return user

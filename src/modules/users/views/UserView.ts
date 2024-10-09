@@ -167,6 +167,16 @@ export default defineComponent({
       roles,
 
       //! Getters
+      getUserRelatedData: computed(() => {
+        if (!user.value) return []
+
+        return [
+          { user: user.value.createdBy, date: user.value.createdAt },
+          { user: user.value.updatedBy, date: user.value.updatedAt },
+          { user: user.value.deletedBy, date: user.value.deletedAt }
+        ]
+      }),
+
       //? Methods
       onSubmit,
       toggleRole,

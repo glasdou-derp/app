@@ -3,11 +3,13 @@ export interface User {
   username: string
   email: string
   roles: UserRole[]
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: null | Date
-  creator: null | UserSummary
-  password: string | null | undefined
+  createdAt: Date | null
+  updatedAt: Date | null
+  deletedAt: Date | null
+  createdBy: null | UserSummary
+  updatedBy: null | UserSummary
+  deletedBy: null | UserSummary
+  password?: string | null
 }
 
 export enum UserRole {

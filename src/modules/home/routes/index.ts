@@ -15,6 +15,12 @@ export const HOME_ROUTES: RouteRecordRaw = {
       name: 'home.view',
       component: () => import('@/modules/home/views/HomeView.vue')
     },
-    ...USERS_ROUTES
+    ...USERS_ROUTES,
+
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@shared/views/NotFoundView.vue')
+    }
   ]
 }
