@@ -6,7 +6,7 @@ import { useConfigStore } from '@shared/stores/config.store'
 import UserCard from '../components/UserCard.vue'
 import { useUsers } from '../composables/useUsers'
 
-useConfigStore().setTitle('Usuarios | OTP')
+useConfigStore().setTitle('Usuarios')
 const { users, lastPage, total, isFetching, isLoading, isPlaceholderData } = useUsers()
 const { page } = usePagination()
 </script>

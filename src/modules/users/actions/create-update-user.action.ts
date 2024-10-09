@@ -19,7 +19,8 @@ const cleanUser = (user: Partial<User>) => {
   delete user.createdBy
   delete user.updatedBy
   delete user.deletedBy
-  if (!user.password) delete user.password
+
+  if (user.password) delete user.password
 
   return user
 }

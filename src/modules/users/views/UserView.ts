@@ -21,7 +21,6 @@ export default defineComponent({
   props: { id: { type: String, required: true } },
   components: { BaseCard, CustomInputText, CustomButton, MenuPopup, UserCredentialDialog },
   setup: (props) => {
-    useConfigStore().setTitle('Usuario | OTP')
     const router = useRouter()
     const toast = useToast()
     const isVisible = ref(false)
@@ -94,7 +93,7 @@ export default defineComponent({
       () => {
         if (!user) return
 
-        const title = user.value?.username ? `${user.value.username} | OTP` : 'Nuevo usuario | OTP'
+        const title = user.value?.username ? `${user.value.username}` : 'Nuevo usuario'
 
         useConfigStore().setTitle(title)
         resetForm({ values: user.value })

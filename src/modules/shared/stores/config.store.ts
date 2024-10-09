@@ -1,3 +1,4 @@
+import { envs } from '@/config/envs'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -40,7 +41,9 @@ export const useConfigStore = defineStore('config', () => {
     //! Actions
     setAppTheme,
     toggleTheme,
-    setTitle: (newTitle: string) => (title.value = newTitle),
+    setTitle: (newTitle: string) => {
+      title.value = `${newTitle} | ${envs.title}`.trim()
+    },
     setIsMobile: (newValue: boolean) => (isMobile.value = newValue)
   }
 })
