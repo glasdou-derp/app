@@ -1,5 +1,5 @@
 export interface Pagination {
-  totalRecords: number
+  total: number
   page: number
   lastPage: number
   loading: boolean

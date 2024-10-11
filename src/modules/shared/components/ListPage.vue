@@ -1,28 +1,23 @@
 <script setup lang="ts">
 import { PrimeIcons as icons } from '@primevue/core/api'
-import { storeToRefs } from 'pinia'
+import type { Component } from 'vue'
 
 import LoadingListPage from '@shared/components/LoadingListPage.vue'
-import { useConfigStore } from '../stores/config.store'
+import type { Pagination } from '../interfaces'
 import CustomButton from './CustomButton.vue'
 import CustomPagination from './CustomPagination.vue'
-import type { Pagination } from '../interfaces'
 
 interface Props {
   blockBody: boolean
   title: string
-  label: string
-  btnDisabled: boolean
   loading: boolean
-  hasData: boolean
   pagination: Pagination
+  data?: any[]
+  component: Component
 }
 
 withDefaults(defineProps<Props>(), { blockBody: false })
 defineEmits(['on:click'])
-
-const configStore = useConfigStore()
-const { isMobile } = storeToRefs(configStore)
 </script>
 
 <template>
@@ -30,11 +25,11 @@ const { isMobile } = storeToRefs(configStore)
     <div class="flex justify-between">
       <h1 class="text-4xl font-semibold">{{ title }}</h1>
       <CustomButton
-        :label="isMobile ? '' : label"
+        v-tooltip.left="'Nuevo'"
         @click="$emit('on:click')"
         :icon="icons.PLUS"
         icon-pos="right"
-        :disabled="btnDisabled"
+        :disabled="loading"
       />
     </div>
   </section>
@@ -43,20 +38,22 @@ const { isMobile } = storeToRefs(configStore)
       <LoadingListPage v-if="loading" />
 
       <article
-        v-if="!hasData && !loading"
+        v-if="!loading && !!data && data.length === 0"
         class="mt-4 col-span-full flex justify-center items-center gap-3 w-full text-4xl text-muted-color-emphasis"
       >
         <i :class="[icons.EXCLAMATION_CIRCLE, '!text-4xl']" />
         <span>No se encontraron registros</span>
       </article>
 
-      <slot v-else />
+      <template v-else>
+        <component v-for="item in data" :is="component" :key="item.id" :data="item" />
+      </template>
     </section>
     <section class="py-8">
       <CustomPagination
         :page="pagination.page"
         :last-page="pagination.lastPage"
-        :total-records="pagination.totalRecords"
+        :total="pagination.total"
         :loading="pagination.loading"
       />
     </section>
