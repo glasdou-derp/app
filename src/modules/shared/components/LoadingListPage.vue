@@ -14,7 +14,7 @@ import { getLimitPaginationHelper } from '../helpers'
     <section class="flex flex-col gap-2">
       <Skeleton width="50%" height="2rem"></Skeleton>
 
-      <Skeleton width="100%" height="6rem"></Skeleton>
+      <Skeleton width="100%" height="5rem"></Skeleton>
       <div class="flex justify-end mt-1">
         <Skeleton width="50%" height="2rem"></Skeleton>
       </div>

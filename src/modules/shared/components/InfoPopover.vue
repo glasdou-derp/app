@@ -7,7 +7,7 @@ import { ref } from 'vue'
 
 interface Props {
   user: UserSummary | null | undefined
-  createdAt: string | Date
+  createdAt: Date | string | null
   title: string
 }
 
