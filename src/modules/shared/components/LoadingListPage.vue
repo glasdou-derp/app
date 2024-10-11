@@ -5,21 +5,20 @@ import { getLimitPaginationHelper } from '../helpers'
 </script>
 
 <template>
-  <BaseCard v-for="index in getLimitPaginationHelper()" :key="index" class="max-w-full">
-    <template #title>
-      <Skeleton width="50%"></Skeleton>
-    </template>
-    <template #subtitle>
-      <Skeleton width="70%"></Skeleton>
-    </template>
-    <template #content>
-      <Skeleton width="100%" height="4rem"></Skeleton>
-    </template>
-    <template #footer>
+  <BaseCard
+    :loading="false"
+    v-for="index in getLimitPaginationHelper()"
+    :key="index"
+    class="max-w-full"
+  >
+    <section class="flex flex-col gap-2">
+      <Skeleton width="50%" height="2rem"></Skeleton>
+
+      <Skeleton width="100%" height="6rem"></Skeleton>
       <div class="flex justify-end mt-1">
-        <Skeleton width="50%" height="3rem"></Skeleton>
+        <Skeleton width="50%" height="2rem"></Skeleton>
       </div>
-    </template>
+    </section>
   </BaseCard>
 </template>
 

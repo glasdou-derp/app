@@ -4,15 +4,9 @@ import { PrimeIcons as icons } from '@primevue/core/api'
 import { storeToRefs } from 'pinia'
 
 import { useConfigStore } from '../stores/config.store'
+import type { Pagination } from '../interfaces'
 
-interface Props {
-  totalRecords: number
-  page: number
-  lastPage: number
-  loading: boolean
-}
-
-const props = defineProps<Props>()
+const props = defineProps<Pagination>()
 const configStore = useConfigStore()
 const { isMobile } = storeToRefs(configStore)
 const visiblePages = computed(() => {

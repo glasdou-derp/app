@@ -2,9 +2,11 @@
 import { PrimeIcons as icons } from '@primevue/core/api'
 import { storeToRefs } from 'pinia'
 
-import CustomButton from './CustomButton.vue'
 import LoadingListPage from '@shared/components/LoadingListPage.vue'
 import { useConfigStore } from '../stores/config.store'
+import CustomButton from './CustomButton.vue'
+import CustomPagination from './CustomPagination.vue'
+import type { Pagination } from '../interfaces'
 
 interface Props {
   blockBody: boolean
@@ -13,11 +15,10 @@ interface Props {
   btnDisabled: boolean
   loading: boolean
   hasData: boolean
+  pagination: Pagination
 }
 
-withDefaults(defineProps<Props>(), {
-  blockBody: false
-})
+withDefaults(defineProps<Props>(), { blockBody: false })
 defineEmits(['on:click'])
 
 const configStore = useConfigStore()
@@ -49,10 +50,15 @@ const { isMobile } = storeToRefs(configStore)
         <span>No se encontraron registros</span>
       </article>
 
-      <slot v-else name="body" />
+      <slot v-else />
     </section>
     <section class="py-8">
-      <slot name="footer" />
+      <CustomPagination
+        :page="pagination.page"
+        :last-page="pagination.lastPage"
+        :total-records="pagination.totalRecords"
+        :loading="pagination.loading"
+      />
     </section>
   </BlockUI>
 </template>

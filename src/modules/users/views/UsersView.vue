@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CustomPagination from '@shared/components/CustomPagination.vue'
 import ListPage from '@shared/components/ListPage.vue'
 import { usePagination } from '@shared/composables/usePagination'
 import { useConfigStore } from '@shared/stores/config.store'
@@ -16,27 +15,18 @@ const { page } = usePagination()
     :blockBody="isFetching && isPlaceholderData"
     title="Usuarios"
     label="Nuevo Usuario"
-    @on:click="
-      $router.push({
-        name: 'user.detail',
-        params: { id: 'nuevo' }
-      })
-    "
+    @on:click="$router.push({ name: 'user.detail', params: { id: 'nuevo' } })"
     :btn-disabled="isLoading && !isPlaceholderData"
     :loading="isLoading && !isPlaceholderData"
     :has-data="!!users && users.length > 0"
+    :pagination="{
+      page,
+      lastPage,
+      totalRecords: total,
+      loading: isLoading && !isPlaceholderData
+    }"
   >
-    <template #body>
-      <UserCard v-for="user in users" :key="user.id" :user="user" />
-    </template>
-    <template #footer>
-      <CustomPagination
-        :page="page"
-        :last-page="lastPage"
-        :total-records="total"
-        :loading="isLoading && !isPlaceholderData"
-      />
-    </template>
+    <UserCard v-for="user in users" :key="user.id" :user="user" />
   </ListPage>
 </template>
 
