@@ -1,43 +1,42 @@
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+
 interface Props {
+  // Existing props
+  id?: string // Made optional since 'id' may come from $attrs
   disabled?: boolean
   error?: string
-  id: string
   label?: string
   modelValue?: string
   placeholder?: string
-  size?: 'large' | 'small'
-  variant?: 'outlined' | 'filled'
   loading?: boolean
-  invalid?: boolean
   autofocus?: boolean
 }
 
-defineProps<Props>()
-
+const props = defineProps<Props>()
 defineEmits(['update:modelValue', 'blur'])
+const attrs = useAttrs()
+const hasError = computed(() => Boolean(props.error))
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
-    <label v-if="label" :for="id">{{ label }}</label>
+    <label v-if="label" :for="attrs.id as string">{{ label }}</label>
     <InputText
+      v-bind="attrs"
       :id="id"
       :model-value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement)?.value || '')"
+      @update:modelValue="$emit('update:modelValue', $event)"
       @blur="$emit('blur')"
-      :aria-describedby="`${id}-help`"
-      :invalid="invalid || Boolean(error)"
+      :invalid="hasError"
       :placeholder="placeholder"
-      :size="size"
-      :variant="variant"
-      fluid
       :disabled="disabled"
       :loading="loading"
       :autofocus="autofocus"
+      fluid
     />
     <transition name="p-message" tag="div" class="flex flex-col">
-      <Message v-if="error" severity="error">{{ error }}</Message>
+      <Message v-if="hasError" severity="error">{{ error }}</Message>
     </transition>
   </div>
 </template>
