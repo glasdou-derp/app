@@ -13,16 +13,16 @@ interface Props {
 
 defineProps<Props>()
 const { notifyInfo, notifyError } = useNotification()
-const { deleteMutation, isDeletePending, isDeleteSuccess, deletedUser } = useUser()
+const { deleteMutation, isDeleteError, isPending, isSuccess } = useUser()
 
-watch(isDeleteSuccess, (value) => {
+watch(isSuccess, (value) => {
   if (!value) return
+  notifyInfo({ detail: value.msg })
+})
 
-  const isDeleted = deletedUser.value?.deletedAt
-
-  isDeleted
-    ? notifyError({ detail: `Usuario "${deletedUser.value?.username}"" eliminado` })
-    : notifyInfo({ detail: `Usuario "${deletedUser.value?.username}"" restaurado` })
+watch(isDeleteError, (value) => {
+  if (!value) return
+  notifyError({ detail: 'Ocurrió un error al procesar la solicitud' })
 })
 </script>
 
@@ -32,7 +32,7 @@ watch(isDeleteSuccess, (value) => {
     @on:delete="deleteMutation({ userId: data.id, isDeleted: !!data.deletedAt })"
     :user="data.createdBy"
     :date="data.createdAt"
-    :loading="isDeletePending"
+    :loading="isPending"
     :deleted="!!data.deletedAt"
   >
     <section class="flex flex-col gap-2">

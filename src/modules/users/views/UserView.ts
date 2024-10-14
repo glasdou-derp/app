@@ -1,17 +1,18 @@
 import { PrimeIcons as icons } from '@primevue/core/api'
 import { useQuery } from '@tanstack/vue-query'
 import { useFieldArray, useForm } from 'vee-validate'
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { UserRole } from '@/modules/users/interfaces'
+import { useNotification } from '@/modules/shared'
+import EntityDetail from '@/modules/shared/components/EntityDetail.vue'
+import { UserRole, type UserRelatedMeta } from '@/modules/users/interfaces'
 import BaseCard from '@shared/components/BaseCard.vue'
 import CustomButton from '@shared/components/CustomButton.vue'
 import CustomInputText from '@shared/components/CustomInputText.vue'
 import MenuPopup from '@shared/components/MenuPopup.vue'
 import { Formatter } from '@shared/helpers/formatter.helper'
 import { useConfigStore } from '@shared/stores/config.store'
-import { useToast } from 'primevue/usetoast'
 import { getUserByUsernameAction } from '../actions'
 import UserCredentialDialog from '../components/UserCredentialDialog.vue'
 import { useUser } from '../composables'
@@ -19,28 +20,25 @@ import { userSchema } from '../schemas/user.schema'
 
 export default defineComponent({
   props: { id: { type: String, required: true } },
-  components: { BaseCard, CustomInputText, CustomButton, MenuPopup, UserCredentialDialog },
+  components: {
+    BaseCard,
+    CustomInputText,
+    CustomButton,
+    MenuPopup,
+    UserCredentialDialog,
+    EntityDetail
+  },
   setup: (props) => {
     const router = useRouter()
-    const toast = useToast()
+    const { notifySuccess, notifyInfo } = useNotification()
     const isVisible = ref(false)
     const password = ref('')
-    const {
-      updateMutation,
-      isUpdatePending,
-      isUpdateSuccess,
-      updatedUser,
-
-      deleteMutation,
-      isDeletePending,
-      isDeleteSuccess,
-      deletedUser
-    } = useUser()
+    const { deleteMutation, updateMutation, isPending, isSuccess, isDeleteError, isUpdateError } =
+      useUser()
 
     const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema: userSchema
     })
-
     const [username, usernameAttrs] = defineField('username')
     const [email, emailAttrs] = defineField('email')
     const { fields: roles, remove: removeRole, push: pushRoles } = useFieldArray<UserRole>('roles')
@@ -84,62 +82,30 @@ export default defineComponent({
       password.value = ''
     }
 
-    watchEffect(() => {
-      if (isError.value && !isLoading.value) return router.replace({ name: 'not.found' })
+    watch([isError, isLoading], ([error, loading]) => {
+      if (error && !loading) router.replace({ name: 'not.found' })
+    })
+
+    watch([isDeleteError, isUpdateError], (val) => {
+      if (!val) return
+      notifyInfo({ detail: 'Ha ocurrido un error al procesar la solicitud' })
     })
 
     watch(
       user,
       () => {
-        if (!user) return
-
-        const title = user.value?.username ? `${user.value.username}` : 'Nuevo usuario'
-
-        useConfigStore().setTitle(title)
+        if (!user.value) return
+        const { username } = user.value
+        useConfigStore().setTitle(username ? `${username}` : 'Nuevo usuario')
         resetForm({ values: user.value })
       },
-      { deep: true, immediate: true }
+      { immediate: true }
     )
 
-    watch([isUpdateSuccess, isDeleteSuccess], ([updateSuccess, deleteSuccess]) => {
-      if (updateSuccess) {
-        toast.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Usuario actualizado correctamente',
-          life: 1000
-        })
-
-        router.replace({
-          name: 'user.detail',
-          params: { id: updatedUser.value!.username }
-        })
-
-        if (updatedUser.value?.password) {
-          isVisible.value = true
-          password.value = updatedUser.value.password
-        }
-
-        resetForm({ values: updatedUser.value })
-      }
-
-      if (deleteSuccess) {
-        const isDeleted = deletedUser.value?.deletedAt
-
-        toast.add({
-          severity: isDeleted ? 'error' : 'info',
-          summary: 'Éxito',
-          detail: `Usuario ${isDeleted ? 'eliminado' : 'restaurado'} correctamente`,
-          life: 1000
-        })
-
-        router.replace({
-          name: 'user.detail',
-          params: { id: deletedUser.value!.username }
-        })
-
-        resetForm({ values: deletedUser.value })
-      }
+    watch(isSuccess, (val) => {
+      if (!val) return
+      notifySuccess({ detail: val.msg })
+      resetForm({ values: val.user })
     })
 
     watch(
@@ -153,7 +119,7 @@ export default defineComponent({
       user,
       meta,
       errors,
-      isPending: computed(() => isUpdatePending.value || isDeletePending.value),
+      isPending,
       UserRole,
       isVisible,
       password,
@@ -166,13 +132,13 @@ export default defineComponent({
       roles,
 
       //! Getters
-      getUserRelatedData: computed(() => {
+      getUserRelatedData: computed<UserRelatedMeta[]>(() => {
         if (!user.value) return []
 
         return [
-          { user: user.value.createdBy, date: user.value.createdAt },
-          { user: user.value.updatedBy, date: user.value.updatedAt },
-          { user: user.value.deletedBy, date: user.value.deletedAt }
+          { title: 'Creado por:', user: user.value.createdBy, date: user.value.createdAt },
+          { title: 'Actualizado por:', user: user.value.updatedBy, date: user.value.updatedAt },
+          { title: 'Eliminado por:', user: user.value.deletedBy, date: user.value.deletedAt }
         ]
       }),
 

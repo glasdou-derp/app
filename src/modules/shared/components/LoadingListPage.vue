@@ -10,6 +10,7 @@ import { getLimitPaginationHelper } from '../helpers'
     v-for="index in getLimitPaginationHelper()"
     :key="index"
     class="max-w-full"
+    :deleted="false"
   >
     <section class="flex flex-col gap-2">
       <Skeleton width="50%" height="2rem"></Skeleton>
