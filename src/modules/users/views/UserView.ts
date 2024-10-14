@@ -4,12 +4,12 @@ import { useFieldArray, useForm } from 'vee-validate'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useNotification } from '@/modules/shared'
-import EntityDetail from '@/modules/shared/components/EntityDetail.vue'
+import { useNotification } from '@/modules/shared/'
 import { UserRole, type UserRelatedMeta } from '@/modules/users/interfaces'
 import BaseCard from '@shared/components/BaseCard.vue'
 import CustomButton from '@shared/components/CustomButton.vue'
 import CustomInputText from '@shared/components/CustomInputText.vue'
+import DetailPlaceholder from '@shared/components/DetailPlaceholder.vue'
 import MenuPopup from '@shared/components/MenuPopup.vue'
 import { Formatter } from '@shared/helpers/formatter.helper'
 import { useConfigStore } from '@shared/stores/config.store'
@@ -26,69 +26,31 @@ export default defineComponent({
     CustomButton,
     MenuPopup,
     UserCredentialDialog,
-    EntityDetail
+    DetailPlaceholder
   },
   setup: (props) => {
     const router = useRouter()
-    const { notifySuccess, notifyInfo } = useNotification()
-    const isVisible = ref(false)
-    const password = ref('')
-    const { deleteMutation, updateMutation, isPending, isSuccess, isDeleteError, isUpdateError } =
-      useUser()
-
-    const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
-      validationSchema: userSchema
-    })
-    const [username, usernameAttrs] = defineField('username')
-    const [email, emailAttrs] = defineField('email')
-    const { fields: roles, remove: removeRole, push: pushRoles } = useFieldArray<UserRole>('roles')
-
+    const { notifyInfo, notifyError } = useNotification()
     const {
-      data: user,
-      isError,
-      isLoading,
-      refetch
-    } = useQuery({
-      queryKey: ['user', props.id],
-      queryFn: () => getUserByUsernameAction(props.id),
-      retry: false
-    })
+      deleteMutation,
+      updateMutation,
+      isError: isUserMutationError,
+      isSuccess,
+      isPending
+    } = useUser()
+    const { isVisible, password, onUpdateVisible } = handlePassword()
+    const { roles, resetForm, user, notFound, refetch, ...formData } = setupForm()
 
-    const toggleRole = (role: UserRole) => {
-      const currentRoles = roles.value.map((r) => r.value)
-      const hasRole = currentRoles.includes(role)
-
-      hasRole ? removeRole(currentRoles.indexOf(role)) : pushRoles(role)
-    }
-
-    const onSubmit = handleSubmit(async (values) => updateMutation(values))
-
-    const onDeleteRestore = (userId: string | undefined, isDeleted: boolean) => {
-      if (!userId) return
-      deleteMutation({ userId, isDeleted })
-    }
-
-    const onNewUser = (): void => {
-      if (!user) {
-        router.replace({ name: 'user.detail', params: { id: 'nuevo' } })
-        return
+    watch(
+      () => notFound,
+      (val) => {
+        if (val) router.replace({ name: 'not.found' })
       }
+    )
 
-      router.push({ name: 'user.detail', params: { id: 'nuevo' } })
-    }
-
-    const onUpdateVisible = (state: boolean) => {
-      isVisible.value = state
-      password.value = ''
-    }
-
-    watch([isError, isLoading], ([error, loading]) => {
-      if (error && !loading) router.replace({ name: 'not.found' })
-    })
-
-    watch([isDeleteError, isUpdateError], (val) => {
+    watch(isUserMutationError, (val) => {
       if (!val) return
-      notifyInfo({ detail: 'Ha ocurrido un error al procesar la solicitud' })
+      notifyError({ detail: 'Ha ocurrido un error al procesar la solicitud' })
     })
 
     watch(
@@ -104,7 +66,12 @@ export default defineComponent({
 
     watch(isSuccess, (val) => {
       if (!val) return
-      notifySuccess({ detail: val.msg })
+
+      val.msg.includes('eliminado')
+        ? notifyError({ detail: val.msg })
+        : notifyInfo({ detail: val.msg })
+
+      router.replace({ name: 'user.detail', params: { id: val.user?.username } })
       resetForm({ values: val.user })
     })
 
@@ -113,27 +80,95 @@ export default defineComponent({
       () => refetch()
     )
 
+    function setupForm() {
+      const {
+        data: user,
+        isError,
+        isLoading,
+        refetch
+      } = useQuery({
+        queryKey: ['user', props.id],
+        queryFn: () => getUserByUsernameAction(props.id),
+        retry: false
+      })
+
+      const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
+        validationSchema: userSchema,
+        validateOnMount: false
+      })
+      const [username, usernameAttrs] = defineField('username')
+      const [email, emailAttrs] = defineField('email')
+      const {
+        fields: roles,
+        remove: removeRole,
+        push: pushRoles
+      } = useFieldArray<UserRole>('roles')
+
+      const toggleRole = (role: UserRole) => {
+        const currentRoles = roles.value.map((r) => r.value)
+        const hasRole = currentRoles.includes(role)
+
+        hasRole ? removeRole(currentRoles.indexOf(role)) : pushRoles(role)
+      }
+      const onSubmit = handleSubmit(async (values) => updateMutation(values))
+      const onDeleteRestore = (userId: string | undefined, isDeleted: boolean) => {
+        if (!userId) return
+        deleteMutation({ userId, isDeleted })
+      }
+      const onNewUser = (): void => {
+        if (!user) {
+          router.replace({ name: 'user.detail', params: { id: 'nuevo' } })
+          return
+        }
+
+        router.push({ name: 'user.detail', params: { id: 'nuevo' } })
+      }
+
+      return {
+        user,
+        notFound: !isLoading.value && isError.value,
+        refetch,
+        username,
+        usernameAttrs,
+        email,
+        emailAttrs,
+        roles,
+        errors,
+        meta,
+        onSubmit,
+        toggleRole,
+        onDeleteRestore,
+        onNewUser,
+        resetForm
+      }
+    }
+
+    function handlePassword() {
+      const isVisible = ref(false)
+      const password = ref('')
+      const onUpdateVisible = (state: boolean) => {
+        isVisible.value = state
+        password.value = ''
+      }
+
+      return { isVisible, password, onUpdateVisible }
+    }
+
     return {
       //* Props
       icons,
       user,
-      meta,
-      errors,
-      isPending,
       UserRole,
       isVisible,
       password,
+      isPending,
 
       //* Form
-      username,
-      usernameAttrs,
-      email,
-      emailAttrs,
-      roles,
+      ...formData,
 
       //! Getters
       getUserRelatedData: computed<UserRelatedMeta[]>(() => {
-        if (!user.value) return []
+        if (!user.value || user.value.id === '') return []
 
         return [
           { title: 'Creado por:', user: user.value.createdBy, date: user.value.createdAt },
@@ -143,12 +178,8 @@ export default defineComponent({
       }),
 
       //? Methods
-      onSubmit,
-      toggleRole,
       Formatter,
       hasRole: (role: UserRole) => roles.value.map((r) => r.value).includes(role),
-      onDeleteRestore,
-      onNewUser,
       onUpdateVisible
     }
   }

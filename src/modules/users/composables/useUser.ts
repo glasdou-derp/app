@@ -35,8 +35,6 @@ export const useUser = () => {
     //* Props
     updateMutation,
     deleteMutation,
-    isUpdateError,
-    isDeleteError,
 
     //! Getters
     isPending: computed(() => isUpdatePending.value || isDeletePending.value),
@@ -45,6 +43,7 @@ export const useUser = () => {
 
       if (isUpdateSuccess.value)
         return { msg: 'Usuario actualizado correctamente', user: updatedUser.value }
+
       if (isDeleteSuccess.value)
         return {
           msg: `Usuario ${deletedUser.value?.deletedAt ? 'eliminado' : 'restaurado'} correctamente`,
@@ -52,7 +51,8 @@ export const useUser = () => {
         }
 
       return null
-    })
+    }),
+    isError: computed(() => isUpdateError.value || isDeleteError.value)
 
     //? Methods
   }

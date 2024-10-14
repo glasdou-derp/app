@@ -15,14 +15,14 @@ interface Props {
 const props = defineProps<Props>()
 const router = useRouter()
 const { notifyInfo, notifyError } = useNotification()
-const { deleteMutation, isDeleteError, isPending, isSuccess } = useUser()
+const { deleteMutation, isPending, isSuccess, isError } = useUser()
 
 watch(isSuccess, (value) => {
   if (!value) return
   notifyInfo({ detail: value.msg })
 })
 
-watch(isDeleteError, (value) => {
+watch(isError, (value) => {
   if (!value) return
   notifyError({ detail: 'Ocurrió un error al procesar la solicitud' })
 })
