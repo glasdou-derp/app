@@ -6,12 +6,14 @@ import ButtonsCard from '@/modules/shared/components/ButtonsCard.vue'
 import type { User } from '@/modules/users/interfaces'
 import { useUser } from '../composables'
 import { useNotification } from '@/modules/shared'
+import { useRouter } from 'vue-router'
 
 interface Props {
   data: User
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+const router = useRouter()
 const { notifyInfo, notifyError } = useNotification()
 const { deleteMutation, isDeleteError, isPending, isSuccess } = useUser()
 
@@ -24,10 +26,15 @@ watch(isDeleteError, (value) => {
   if (!value) return
   notifyError({ detail: 'Ocurrió un error al procesar la solicitud' })
 })
+const handleMiddleClick = () => {
+  const routeData = router.resolve({ name: 'user.detail', params: { id: props.data.username } })
+  window.open(routeData.href, '_blank')
+}
 </script>
 
 <template>
   <ButtonsCard
+    @on:edit:middle="handleMiddleClick"
     @on:edit="$router.push({ name: 'user.detail', params: { id: data.username } })"
     @on:delete="deleteMutation({ userId: data.id, isDeleted: !!data.deletedAt })"
     :user="data.createdBy"

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ButtonProps } from 'primevue/button'
 import { useConfigStore } from '../stores/config.store'
-import { storeToRefs } from 'pinia'
 
 interface Props {
   className?: string
@@ -19,7 +18,6 @@ interface Props {
   loadingIcon?: string
   type?: ButtonProps['type']
 }
-
 withDefaults(defineProps<Props>(), {
   className: '',
   severity: 'primary',
@@ -27,16 +25,13 @@ withDefaults(defineProps<Props>(), {
   fluid: false,
   type: 'button'
 })
-
-defineEmits(['click'])
-
+defineEmits(['click', 'click:middle'])
 const configStore = useConfigStore()
-const { darkTheme } = storeToRefs(configStore)
 </script>
 
 <template>
   <Button
-    :outlined="darkTheme ? true : undefined"
+    :outlined="configStore.darkTheme ? true : undefined"
     :label="label"
     :severity="severity"
     :fluid="fluid"
@@ -51,6 +46,7 @@ const { darkTheme } = storeToRefs(configStore)
     :class="className"
     :iconClass="`!${iconClass}`"
     @click="$emit('click', $event)"
+    @mousedown.middle="$emit('click:middle', $event)"
   />
 </template>
 

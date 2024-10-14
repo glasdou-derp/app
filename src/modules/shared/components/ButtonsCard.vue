@@ -14,6 +14,7 @@ interface Props {
   deleted: boolean
 }
 defineProps<Props>()
+defineEmits(['on:edit', 'on:edit:middle', 'on:delete'])
 const authStore = useAuthStore()
 
 const popRef = ref<any>(null)
@@ -52,6 +53,7 @@ const toggleInfo = (evt: MouseEvent) => {
             <CustomButton
               v-tooltip.top="'Editar'"
               @click="$emit('on:edit')"
+              @click:middle="$emit('on:edit:middle')"
               :icon="icons.PENCIL"
               severity="info"
             />
