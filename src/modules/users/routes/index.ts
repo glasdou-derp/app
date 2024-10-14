@@ -14,5 +14,10 @@ export const USERS_ROUTES: RouteRecordRaw[] = [
     props: true,
     beforeEnter: [isAdminGuard],
     component: () => import('../views/UserView.vue')
+  },
+  {
+    path: '/usuarios/test',
+    name: 'user.test',
+    component: () => import('../views/UserTestView.vue')
   }
 ]

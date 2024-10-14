@@ -1,9 +1,11 @@
 <script setup lang="ts">
 interface Props {
   loading: boolean
-  deleted: boolean
+  deleted?: boolean
 }
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  deleted: false
+})
 </script>
 
 <template>

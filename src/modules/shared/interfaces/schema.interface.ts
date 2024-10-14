@@ -10,7 +10,7 @@ export interface DynamicField {
   component: Component
   rules: yup.AnySchema
   autofocus?: boolean
-  props: DynamicFieldProps
+  props: any
 }
 
 export interface FormSetup {
@@ -24,18 +24,4 @@ export interface FormSetupField extends DynamicField {
   fieldValue: Ref<any>
   error: Ref<string | undefined>
   // fieldAttrs: Ref<BaseFieldProps & GenericObject>
-}
-
-export interface DynamicFieldProps {
-  id: string
-  disabled?: boolean
-  error?: string
-  label?: string
-  modelValue?: string
-  placeholder?: string
-  size?: 'large' | 'small'
-  variant?: 'outlined' | 'filled'
-  loading?: boolean
-  invalid?: boolean
-  autofocus?: boolean
 }
