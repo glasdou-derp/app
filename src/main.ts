@@ -1,15 +1,14 @@
-import './assets/main.css'
 import 'primeicons/primeicons.css'
+import './assets/main.css'
+import './config/yup'
 
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
-import { createApp } from 'vue'
 import FocusTrap from 'primevue/focustrap'
 import ToastService from 'primevue/toastservice'
 import Tooltip from 'primevue/tooltip'
-
-import './config/yup'
+import { createApp } from 'vue'
 
 import App from './App.vue'
 import Aura from './config/app.theme'

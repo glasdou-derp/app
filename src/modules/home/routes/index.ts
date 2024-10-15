@@ -1,4 +1,5 @@
 import isAuthenticatedGuard from '@/modules/auth/guards/is-authenticated.guard'
+import { USERS_ROUTES } from '@/modules/users/routes'
 import type { RouteRecordRaw } from 'vue-router'
 
 export const HOME_ROUTES: RouteRecordRaw = {
@@ -13,6 +14,13 @@ export const HOME_ROUTES: RouteRecordRaw = {
       path: '',
       name: 'home.view',
       component: () => import('@/modules/home/views/HomeView.vue')
+    },
+    ...USERS_ROUTES,
+
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@shared/views/NotFoundView.vue')
     }
   ]
 }

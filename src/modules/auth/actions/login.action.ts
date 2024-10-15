@@ -14,7 +14,7 @@ export const loginAction = async (
     if (isAxiosError(error) && error.response?.status === 401)
       return { ok: false, message: 'Credenciales incorrectas' }
 
-    console.error(error)
-    throw new Error('Ocurrió un error inesperado')
+    console.log(`Error: ${error}`)
+    throw new Error('Unexpected error')
   }
 }
