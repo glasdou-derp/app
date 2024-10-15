@@ -45,7 +45,7 @@ const onSubmit = async ({ username, password }: GenericObject) => {
 <template>
   <div class="max-w-[30rem] h-full mx-auto flex items-center flex-col justify-center">
     <h1 class="font-bold text-center text-2xl mb-5">Logo</h1>
-    <BaseCard :loading="false">
+    <BaseCard :loading="loading">
       <h4 class="text-center text-2xl mb-4">Inicio de sesión</h4>
 
       <DynamicForm

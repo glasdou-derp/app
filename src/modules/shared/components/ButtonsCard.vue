@@ -26,19 +26,17 @@ const toggleInfo = (evt: MouseEvent) => {
 </script>
 
 <template>
-  <BlockUI class="w-full" :blocked="loading">
-    <Card
-      :class="[
-        'dark:bg-dark-950 dark:border-gray-700 border',
-        { ' border-primary-400': !deleted },
-        { 'border-red-500 dark:border-red-600': deleted }
-      ]"
-    >
-      <template #content>
+  <Card
+    :class="[
+      'w-full dark:bg-dark-950 dark:border-gray-700 border',
+      { ' border-primary-400': !deleted },
+      { 'border-red-500 dark:border-red-600': deleted }
+    ]"
+  >
+    <template #content>
+      <BlockUI :blocked="loading">
         <slot />
-      </template>
-      <template #footer>
-        <section class="flex justify-between flex-row-reverse gap-2">
+        <section class="flex justify-between flex-row-reverse gap-2 mt-2">
           <section class="flex gap-2">
             <template v-if="user">
               <CustomButton
@@ -67,9 +65,9 @@ const toggleInfo = (evt: MouseEvent) => {
           </section>
           <Tag v-if="deleted" severity="danger">Eliminado</Tag>
         </section>
-      </template>
-    </Card>
-  </BlockUI>
+      </BlockUI>
+    </template>
+  </Card>
 </template>
 
 <style scoped></style>
