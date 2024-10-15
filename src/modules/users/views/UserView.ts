@@ -38,7 +38,7 @@ export default defineComponent({
       isSuccess,
       isPending
     } = useUser()
-    const { isVisible, password, onUpdateVisible } = handlePassword()
+    const { isVisible, password, closeDialog } = handlePassword()
     const { roles, resetForm, user, notFound, refetch, ...formData } = setupForm()
 
     watch(
@@ -50,7 +50,7 @@ export default defineComponent({
 
     watch(isUserMutationError, (val) => {
       if (!val) return
-      notifyError({ detail: 'Ha ocurrido un error al procesar la solicitud' })
+      notifyError({ detail: val })
     })
 
     watch(
@@ -66,6 +66,11 @@ export default defineComponent({
 
     watch(isSuccess, (val) => {
       if (!val) return
+
+      if (val.user?.password) {
+        password.value = val.user.password
+        isVisible.value = true
+      }
 
       val.msg.includes('eliminado')
         ? notifyError({ detail: val.msg })
@@ -146,12 +151,13 @@ export default defineComponent({
     function handlePassword() {
       const isVisible = ref(false)
       const password = ref('')
-      const onUpdateVisible = (state: boolean) => {
+
+      const closeDialog = (state: boolean) => {
         isVisible.value = state
         password.value = ''
       }
 
-      return { isVisible, password, onUpdateVisible }
+      return { isVisible, password, closeDialog }
     }
 
     return {
@@ -180,7 +186,7 @@ export default defineComponent({
       //? Methods
       Formatter,
       hasRole: (role: UserRole) => roles.value.map((r) => r.value).includes(role),
-      onUpdateVisible
+      closeDialog
     }
   }
 })

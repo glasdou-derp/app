@@ -48,7 +48,7 @@
       :visible="isVisible"
       :username="user.username"
       :password="password"
-      @update:visible="onUpdateVisible"
+      @update:visible="closeDialog"
     />
   </DetailPlaceholder>
 </template>
