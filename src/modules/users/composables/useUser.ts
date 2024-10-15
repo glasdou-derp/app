@@ -10,8 +10,8 @@ export const useUser = () => {
     mutate: updateMutation,
     isPending: isUpdatePending,
     isSuccess: isUpdateSuccess,
-    isError: isUpdateError,
-    data: updatedUser
+    data: updatedUser,
+    error: updateError
   } = useMutation({
     mutationFn: createUpdateUserAction
   })
@@ -20,8 +20,8 @@ export const useUser = () => {
     mutate: deleteMutation,
     isPending: isDeletePending,
     isSuccess: isDeleteSuccess,
-    isError: isDeleteError,
-    data: deletedUser
+    data: deletedUser,
+    error: deleteError
   } = useMutation({
     mutationFn: ({ userId, isDeleted }: DeleteRestoreUser) =>
       deleteRestoreUserAction(userId, isDeleted),
@@ -52,7 +52,11 @@ export const useUser = () => {
 
       return null
     }),
-    isError: computed(() => isUpdateError.value || isDeleteError.value)
+    isError: computed<string | null>(() => {
+      if (updateError.value) return updateError.value.message.split(':')[1].trim()
+      if (deleteError.value) return deleteError.value.message.split(':')[1].trim()
+      return null
+    })
 
     //? Methods
   }

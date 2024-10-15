@@ -1,4 +1,5 @@
 import { api } from '@/api'
+import { exceptionHandlerHelper } from '@/modules/shared'
 import type { User } from '@/modules/users/interfaces'
 
 export const createUpdateUserAction = async (user: Partial<User>): Promise<User> => {
@@ -31,8 +32,7 @@ const createUser = async (user: Partial<User>) => {
 
     return data
   } catch (error) {
-    console.log('Error: ', error)
-    throw new Error('Unexpected error')
+    throw exceptionHandlerHelper(error, 'createUser')
   }
 }
 
@@ -42,7 +42,6 @@ const updateUser = async (userId: string, user: Partial<User>) => {
 
     return data
   } catch (error) {
-    console.log('Error: ', error)
-    throw new Error('Unexpected error')
+    throw exceptionHandlerHelper(error, 'updateUser')
   }
 }

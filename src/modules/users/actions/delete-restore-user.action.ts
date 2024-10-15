@@ -1,5 +1,6 @@
 import { api } from '@/api'
 import type { User } from '../interfaces'
+import { exceptionHandlerHelper } from '@/modules/shared'
 
 export const deleteRestoreUserAction = async (userId: string, isDeleted: boolean) => {
   if (isDeleted) return await restoreUser(userId)
@@ -13,8 +14,7 @@ const restoreUser = async (userId: string) => {
 
     return data
   } catch (error) {
-    console.log('Error: ', error)
-    throw new Error('Unexpected error')
+    throw exceptionHandlerHelper(error, 'restoreUser')
   }
 }
 
@@ -24,7 +24,6 @@ const deleteUser = async (userId: string) => {
 
     return data
   } catch (error) {
-    console.log('Error: ', error)
-    throw new Error('Unexpected error')
+    throw exceptionHandlerHelper(error, 'deleteUser')
   }
 }
