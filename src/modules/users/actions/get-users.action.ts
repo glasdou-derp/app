@@ -10,7 +10,7 @@ export const getUsersAction = async (page: number = 1): Promise<ApiListResponse<
     params.append('page', page.toString())
     params.append('limit', limit.toString())
 
-    const { data } = await api.get<ApiListResponse<User>>('/users', { params })
+    const { data } = await api.get<ApiListResponse<User>>('/user', { params })
 
     return data
   } catch (error) {

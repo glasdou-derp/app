@@ -10,7 +10,7 @@ export const deleteRestoreUserAction = async (userId: string, isDeleted: boolean
 
 const restoreUser = async (userId: string) => {
   try {
-    const { data } = await api.patch<User>(`/users/${userId}/restore`)
+    const { data } = await api.patch<User>(`/user/${userId}/restore`)
 
     return data
   } catch (error) {
@@ -20,7 +20,7 @@ const restoreUser = async (userId: string) => {
 
 const deleteUser = async (userId: string) => {
   try {
-    const { data } = await api.delete<User>(`/users/${userId}`)
+    const { data } = await api.delete<User>(`/user/${userId}`)
 
     return data
   } catch (error) {

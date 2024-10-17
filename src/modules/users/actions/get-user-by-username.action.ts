@@ -18,7 +18,7 @@ export const getUserByUsernameAction = async (username: string): Promise<User> =
   if (username === 'nuevo') return emptyUser
 
   try {
-    const { data } = await api.get<User>(`/users/username/${username}`)
+    const { data } = await api.get<User>(`/user/username/${username}`)
 
     return data
   } catch (error) {
