@@ -23,6 +23,12 @@ export const getMenuOptions = (userRoles: UserRole[]) => {
       label: 'Usuarios',
       icon: icons.USERS,
       route: { name: 'user.list' }
+    },
+    {
+      roles: [UserRole.Admin, UserRole.Moderator],
+      label: 'Clientes',
+      icon: icons.USERS,
+      route: { name: 'customer.list' }
     }
   ]
 

@@ -10,7 +10,7 @@ import CustomButton from './CustomButton.vue'
 interface Props {
   loading: boolean
   user?: UserSummary | null
-  date: Date | string | null
+  date?: Date | string | null
   deleted: boolean
 }
 defineProps<Props>()
