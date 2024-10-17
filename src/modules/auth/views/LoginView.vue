@@ -31,10 +31,7 @@ const onSubmit = async ({ username, password }: GenericObject) => {
     }
 
     notifySuccess({ detail: 'Inicio de sesión exitoso' })
-
-    // resetForm()
   } catch (error) {
-    console.log(error)
     notifyError({ detail: 'Ocurrió un error al iniciar sesión' })
   } finally {
     loading.value = false
