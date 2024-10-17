@@ -30,7 +30,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       return true
     } catch (error) {
-      return logout(true)
+      logout(true)
+      throw error
     }
   }
 
