@@ -1,6 +1,6 @@
 import { api } from '@/api'
 import { exceptionHandlerHelper } from '@/modules/shared'
-import type { User } from '@/modules/users/interfaces'
+import type { User } from '../interfaces'
 
 export const createUpdateUserAction = async (user: Partial<User>): Promise<User> => {
   const userId = user.id
@@ -28,7 +28,7 @@ const cleanUser = (user: Partial<User>) => {
 
 const createUser = async (user: Partial<User>) => {
   try {
-    const { data } = await api.post<User>('/users', user)
+    const { data } = await api.post<User>('/user', user)
 
     return data
   } catch (error) {
@@ -38,7 +38,7 @@ const createUser = async (user: Partial<User>) => {
 
 const updateUser = async (userId: string, user: Partial<User>) => {
   try {
-    const { data } = await api.patch<User>(`/users/${userId}`, user)
+    const { data } = await api.patch<User>(`/user/${userId}`, user)
 
     return data
   } catch (error) {
