@@ -17,7 +17,7 @@ export const useCustomer = () => {
       deleteRestoreCustomerAction(id, isDeleted),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
-      queryClient.setQueryData(['customer', data.code], data)
+      queryClient.setQueryData(['customer', data.code.toString()], data)
     }
   })
 
@@ -31,7 +31,7 @@ export const useCustomer = () => {
     mutationFn: createUpdateCustomerAction,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
-      queryClient.setQueryData(['customer', data.code], data)
+      queryClient.setQueryData(['customer', data.code.toString()], data)
     }
   })
 

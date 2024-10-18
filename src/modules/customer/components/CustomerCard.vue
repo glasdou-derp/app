@@ -42,7 +42,9 @@ const handleMiddleClick = () => {
   >
     <section class="flex flex-col gap-2">
       <span class="text-xl">
-        <Tag />
+        <Tag>
+          <span class="text-2xl">#{{ data.code }}</span>
+        </Tag>
       </span>
 
       <span class="text-xl">

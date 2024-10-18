@@ -13,10 +13,9 @@ export const createUpdateCustomerAction = async (customer: Partial<Customer>) =>
 }
 
 const cleanCustomer = (customer: Partial<Customer>) => {
-  const cleanedCustomer = { ...customer }
-
-  ObjectManipulator.exclude(cleanedCustomer, [
+  return ObjectManipulator.exclude(customer, [
     'id',
+    'code',
     'createdAt',
     'updatedAt',
     'deletedAt',
@@ -24,13 +23,11 @@ const cleanCustomer = (customer: Partial<Customer>) => {
     'updatedBy',
     'deletedBy'
   ])
-
-  return cleanedCustomer
 }
 
 const createCustomer = async (customer: Partial<Customer>) => {
   try {
-    const { data } = await api.post<Customer>('/customers', customer)
+    const { data } = await api.post<Customer>('/customer', customer)
 
     return data
   } catch (error) {
@@ -40,7 +37,7 @@ const createCustomer = async (customer: Partial<Customer>) => {
 
 const updateCustomer = async (customer: Partial<Customer>, id: string) => {
   try {
-    const { data } = await api.put<Customer>(`/customers/${id}`, customer)
+    const { data } = await api.patch<Customer>(`/customer/${id}`, customer)
 
     return data
   } catch (error) {
